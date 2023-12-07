@@ -84,6 +84,5 @@ if botao_enviar_lead:
 
 # Créditos na barra lateral
 st.sidebar.markdown("""
-    **por Mariana de Assis**
-    [![Mariana de Assis](URL_DA_FOTO_DO_PERFIL)](https://www.instagram.com/marianateassis/)
+    **por [Mariana de Assis](https://www.instagram.com/marianateassis/)**
 """, unsafe_allow_html=True)
