@@ -31,7 +31,7 @@ def obter_curtidas(shortcode):
     return postagem.likes
 
 # Interface do aplicativo Streamlit
-st.title('Vee o Número de Curtidas em Posts do Instagram')
+st.title('Veja o Número de Curtidas em Posts do Instagram')
 
 # Formulário de captura de leads
 with st.form(key='form_lead'):
