@@ -2,10 +2,10 @@ import streamlit as st
 import mailchimp_marketing as Mailchimp
 from mailchimp_marketing.api_client import ApiClientError
 import instaloader
-from dotenv import load_dotenv 
+import dotenv
 import os
 
-load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
+dotenv.load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
 
 mailchimp_api_key = os.environ.get('MAILCHIMP_API_KEY')
 mailchimp_server = os.environ.get('MAILCHIMP_SERVER')
