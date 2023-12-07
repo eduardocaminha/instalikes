@@ -3,15 +3,11 @@ import mailchimp_marketing as Mailchimp
 from mailchimp_marketing.api_client import ApiClientError
 import instaloader
 import os
-from dotenv import load_dotenv
-
-# Carrega as variáveis de ambiente do arquivo .env
-load_dotenv()
 
 # Configuração do Mailchimp
-mailchimp_api_key = os.environ.get('MAILCHIMP_API_KEY')
-mailchimp_server = os.environ.get('MAILCHIMP_SERVER')
-mailchimp_audience_id = os.environ.get('MAILCHIMP_AUDIENCE_ID')
+mailchimp_api_key = st.secrets["MAILCHIMP_API_KEY"]
+mailchimp_server = st.secrets["MAILCHIMP_SERVER"]
+mailchimp_audience_id = st.secrets["MAILCHIMP_AUDIENCE_ID"]
 
 # Inicializa o cliente do Mailchimp
 mailchimp_client = Mailchimp.Client()
