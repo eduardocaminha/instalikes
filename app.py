@@ -30,7 +30,7 @@ def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, audience_id):
         },
     }
     try:
-        # Garantindo que o audience_id (list_id) está sendo passado corretamente
+        # Certifique-se de que audience_id está sendo passado corretamente
         resposta = mailchimp_client.lists.add_list_member(audience_id, info_membro)
         return resposta
     except ApiClientError as error:
@@ -40,7 +40,7 @@ def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, audience_id):
         else:
             return {"error": f"ApiClientError: {error_details}"}
     except Exception as e:
-        return {"error": f"Exception: {e}"}
+        return {"error": f"Exception: {str(e)}"}
 
 # Função para obter o número de curtidas de uma postagem específica do Instagram
 def obter_curtidas(shortcode):
@@ -85,5 +85,6 @@ if botao_enviar_lead:
 
 # Créditos na barra lateral
 st.sidebar.markdown("""
-    **por [Mariana de Assis](https://www.instagram.com/marianateassis/)**
+    **por Mariana de Assis**
+    [![Mariana de Assis](URL_DA_FOTO_DO_PERFIL)](https://www.instagram.com/marianateassis/)
 """, unsafe_allow_html=True)
