@@ -4,7 +4,7 @@ from mailchimp_marketing.api_client import ApiClientError
 import instaloader
 
 # Configuração do Mailchimp
-mailchimp_api_key = '4e04866a69eaa362b5d8e2524eb67068-us17'
+mailchimp_api_key = '03aadfac6b114fab3effea29fd14ea04-us17'
 mailchimp_server = 'us17'
 mailchimp_audience_id = 'a7802c3eeb'
 
