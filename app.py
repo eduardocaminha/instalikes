@@ -2,7 +2,6 @@ import streamlit as st
 import mailchimp_marketing as Mailchimp
 from mailchimp_marketing.api_client import ApiClientError
 import instaloader
-import os
 
 # Configuração do Mailchimp
 mailchimp_api_key = st.secrets["MAILCHIMP_API_KEY"]
