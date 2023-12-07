@@ -3,11 +3,28 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import instaloader
+import os
+
+def load_credentials_from_env():
+    return {
+        "type": os.environ.get("GCP_TYPE"),
+        "project_id": os.environ.get("GCP_PROJECT_ID"),
+        "private_key_id": os.environ.get("GCP_PRIVATE_KEY_ID"),
+        "private_key": os.environ.get("GCP_PRIVATE_KEY"),
+        "client_email": os.environ.get("GCP_CLIENT_EMAIL"),
+        "client_id": os.environ.get("GCP_CLIENT_ID"),
+        "auth_uri": os.environ.get("GCP_AUTH_URI"),
+        "token_uri": os.environ.get("GCP_TOKEN_URI"),
+        "auth_provider_x509_cert_url": os.environ.get("GCP_AUTH_PROVIDER_X509_CERT_URL"),
+        "client_x509_cert_url": os.environ.get("GCP_CLIENT_X509_CERT_URL"),
+        "universe_domain": os.environ.get("GCP_UNIVERSE_DOMAIN"),
+    }
 
 # Carrega as credenciais e inicializa o cliente do Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds_info = load_credentials_from_env()
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_info, scope)
 client = gspread.authorize(creds)
 sheet = client.open("Instalikes").sheet1
 
