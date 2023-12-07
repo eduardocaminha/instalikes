@@ -58,25 +58,29 @@ with st.form(key='form_lead'):
 
 # Verifica se o e-mail foi enviado
 if botao_enviar_lead:
-    existe = adicionar_lead_ao_sheet(email, instagram_handle)
+    # Verifica se ambos os campos foram preenchidos
+    if email and instagram_handle:
+        existe = adicionar_lead_ao_sheet(email, instagram_handle)
 
-    if not existe:
-        st.success("Agora você pode acessar a ferramenta!")
+        if not existe:
+            st.success("Agora você pode acessar a ferramenta!")
 
-    # Mostrar buscador de curtidas
-    st.write("""
-        Para encontrar o shortcode de uma postagem do Instagram, 
-        acesse a postagem no navegador e copie a parte do URL após 'instagram.com/p/'. 
-        Por exemplo, no URL 'https://www.instagram.com/p/XXXXX/', o shortcode é 'XXXXX'.
-    """)
-    shortcode = st.text_input('Digite o shortcode da postagem do Instagram:')
-    if st.button('Obter Curtidas'):
-        if shortcode:
-            try:
-                curtidas = obter_curtidas(shortcode)
-                st.write(f'A postagem com o shortcode "{shortcode}" tem {curtidas} curtidas.')
-            except Exception as e:
-                st.error(f'Ocorreu um erro: {e}')
+        # Mostrar buscador de curtidas
+        st.write("""
+            Para encontrar o shortcode de uma postagem do Instagram, 
+            acesse a postagem no navegador e copie a parte do URL após 'instagram.com/p/'. 
+            Por exemplo, no URL 'https://www.instagram.com/p/XXXXX/', o shortcode é 'XXXXX'.
+        """)
+        shortcode = st.text_input('Digite o shortcode da postagem do Instagram:')
+        if st.button('Obter Curtidas'):
+            if shortcode:
+                try:
+                    curtidas = obter_curtidas(shortcode)
+                    st.write(f'A postagem com o shortcode "{shortcode}" tem {curtidas} curtidas.')
+                except Exception as e:
+                    st.error(f'Ocorreu um erro: {e}')
+    else:
+        st.error("Por favor, preencha todos os campos obrigatórios.")
 
 # Rodapé com créditos
 st.markdown("""
