@@ -19,16 +19,17 @@ mailchimp_client.set_config({
 })
 
 # Função para adicionar e-mail e perfil do Instagram à audiência do Mailchimp
-def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle):
+def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, audience_id):
     info_membro = {
         "email_address": email,
         "status": "subscribed",
         "merge_fields": {
-            "INSTAGRAM": instagram_handle,
+            "INSTAGRAM": instagram_handle,  # Ajuste o nome do campo se necessário
         },
     }
     try:
-        resposta = mailchimp_client.lists.add_list_member(mailchimp_audience_id, info_membro)
+        # Certifique-se de que audience_id está sendo passado corretamente
+        resposta = mailchimp_client.lists.add_list_member(audience_id, info_membro)
         return resposta
     except ApiClientError as error:
         error_details = error.text if hasattr(error, 'text') else str(error)
@@ -56,7 +57,7 @@ with st.form(key='form_lead'):
 
 # Verifica se o e-mail foi enviado
 if botao_enviar_lead:
-    resultado = adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle)
+    resultado = adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, mailchimp_audience_id)
 
     # Se não houver erro ou se o membro já existir, mostrar instruções e permitir acesso à funcionalidade de curtidas
     if 'success' in resultado or 'id' in resultado:
