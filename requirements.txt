@@ -1,3 +1,4 @@
 streamlit
 mailchimp_marketing
 instaloader
+dotenv
