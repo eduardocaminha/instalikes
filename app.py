@@ -1,44 +1,28 @@
 import streamlit as st
-import mailchimp_marketing as Mailchimp
-from mailchimp_marketing.api_client import ApiClientError
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
 import instaloader
-import dotenv
-import os
 
-dotenv.load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
+# Carrega as credenciais e inicializa o cliente do Google Sheets
+scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+client = gspread.authorize(creds)
+sheet = client.open("Instalikes").sheet1
 
-mailchimp_api_key = os.environ.get('MAILCHIMP_API_KEY')
-mailchimp_server = os.environ.get('MAILCHIMP_SERVER')
-mailchimp_audience_id = os.environ.get('MAILCHIMP_AUDIENCE_ID')
+# Função para adicionar lead à planilha
+def adicionar_lead_ao_sheet(email, instagram):
+    # Busca por registros existentes
+    registros = sheet.get_all_records()
+    for registro in registros:
+        if registro['Email'] == email and registro['Instagram'] == instagram:
+            return True  # Retorna True se encontrar um registro existente
 
-# Inicializa o cliente do Mailchimp
-mailchimp_client = Mailchimp.Client()
-mailchimp_client.set_config({
-    "api_key": mailchimp_api_key,
-    "server": mailchimp_server
-})
-
-# Função para adicionar e-mail e perfil do Instagram à audiência do Mailchimp
-def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, audience_id):
-    info_membro = {
-        "email_address": email,
-        "status": "subscribed",
-        "merge_fields": {
-            "INSTAGRAM": instagram_handle,  # Ajuste o nome do campo se necessário
-        },
-    }
-    try:
-        # Certifique-se de que audience_id está sendo passado corretamente
-        resposta = mailchimp_client.lists.add_list_member(audience_id, info_membro)
-        return resposta
-    except ApiClientError as error:
-        error_details = error.text if hasattr(error, 'text') else str(error)
-        if 'Member Exists' in error_details:
-            return {"success": True}
-        else:
-            return {"error": f"ApiClientError: {error_details}"}
-    except Exception as e:
-        return {"error": f"Exception: {str(e)}"}
+    # Adiciona um novo registro
+    agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sheet.append_row([email, instagram, agora])
+    return False  # Retorna False indicando que é um novo registro
 
 # Função para obter o número de curtidas de uma postagem específica do Instagram
 def obter_curtidas(shortcode):
@@ -47,7 +31,7 @@ def obter_curtidas(shortcode):
     return postagem.likes
 
 # Interface do aplicativo Streamlit
-st.title('Buscador de Curtidas de Postagens do Instagram')
+st.title('Vee o Número de Curtidas em Posts do Instagram')
 
 # Formulário de captura de leads
 with st.form(key='form_lead'):
@@ -57,32 +41,30 @@ with st.form(key='form_lead'):
 
 # Verifica se o e-mail foi enviado
 if botao_enviar_lead:
-    resultado = adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, mailchimp_audience_id)
+    existe = adicionar_lead_ao_sheet(email, instagram_handle)
 
-    # Se não houver erro ou se o membro já existir, mostrar instruções e permitir acesso à funcionalidade de curtidas
-    if 'success' in resultado or 'id' in resultado:
-        st.success("Agora você pode usar a funcionalidade de curtidas.")
-        
-        # Instruções para encontrar o shortcode da postagem
-        st.write("""
-            Para encontrar o shortcode de uma postagem do Instagram, 
-            acesse a postagem no navegador e copie a parte do URL após 'instagram.com/p/'. 
-            Por exemplo, no URL 'https://www.instagram.com/p/XXXXX/', o shortcode é 'XXXXX'.
-        """)
+    if not existe:
+        st.success("Agora você pode acessar a ferramenta!")
 
-        shortcode = st.text_input('Digite o shortcode da postagem do Instagram:')
-        if st.button('Obter Curtidas'):
-            if shortcode:
-                try:
-                    curtidas = obter_curtidas(shortcode)
-                    st.write(f'A postagem com o shortcode "{shortcode}" tem {curtidas} curtidas.')
-                except Exception as e:
-                    st.error(f'Ocorreu um erro: {e}')
-    elif 'error' in resultado:
-        st.error(f"Ocorreu um erro ao enviar os dados: {resultado['error']}")
+    # Mostrar buscador de curtidas
+    st.write("""
+        Para encontrar o shortcode de uma postagem do Instagram, 
+        acesse a postagem no navegador e copie a parte do URL após 'instagram.com/p/'. 
+        Por exemplo, no URL 'https://www.instagram.com/p/XXXXX/', o shortcode é 'XXXXX'.
+    """)
+    shortcode = st.text_input('Digite o shortcode da postagem do Instagram:')
+    if st.button('Obter Curtidas'):
+        if shortcode:
+            try:
+                curtidas = obter_curtidas(shortcode)
+                st.write(f'A postagem com o shortcode "{shortcode}" tem {curtidas} curtidas.')
+            except Exception as e:
+                st.error(f'Ocorreu um erro: {e}')
 
-# Créditos na barra lateral
-st.sidebar.markdown("""
-    **por Mariana de Assis**
-    [![Mariana de Assis](URL_DA_FOTO_DO_PERFIL)](https://www.instagram.com/marianateassis/)
+# Rodapé com créditos
+st.markdown("""
+---
+**por [Mariana de Assis](https://www.instagram.com/marianateassis/)**
+
+**desenvolvido por [Eduardo Caminha](https://www.instagram.com/ecaminhan/)**
 """, unsafe_allow_html=True)

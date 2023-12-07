@@ -1,4 +1,4 @@
 streamlit
-mailchimp_marketing
+gspread
+oauth2client
 instaloader
-python-dotenv
