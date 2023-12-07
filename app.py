@@ -26,10 +26,11 @@ def adicionar_email_e_perfil_ao_mailchimp(email, instagram_handle, audience_id):
         "email_address": email,
         "status": "subscribed",
         "merge_fields": {
-            "INSTAGRAM": instagram_handle,
+            "INSTAGRAM": instagram_handle,  # Ajuste o nome do campo se necessário
         },
     }
     try:
+        # Garantindo que o audience_id (list_id) está sendo passado corretamente
         resposta = mailchimp_client.lists.add_list_member(audience_id, info_membro)
         return resposta
     except ApiClientError as error:
