@@ -10,6 +10,7 @@ load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
 mailchimp_api_key = os.environ.get('MAILCHIMP_API_KEY')
 mailchimp_server = os.environ.get('MAILCHIMP_SERVER')
 mailchimp_audience_id = os.environ.get('MAILCHIMP_AUDIENCE_ID')
+
 # Inicializa o cliente do Mailchimp
 mailchimp_client = Mailchimp.Client()
 mailchimp_client.set_config({
